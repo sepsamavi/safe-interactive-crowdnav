@@ -66,4 +66,4 @@ CrowdSimPlus is based on OpenAI gym and is an extension of CrowdSim ([Repo](http
 
 ## Contributors
 
-This repository is primarily developed by [Sepehr Samavi](github.com/sepsamavi) (`sicnav` and `crowd_sim_plus`) and [James R. Han](github.com/james-r-han) (`RL_nav` and `crowd_sim_plus`).
+This repository is primarily developed by [Sepehr Samavi](https://github.com/sepsamavi) (`sicnav` and `crowd_sim_plus`) and [James R. Han](https://github.com/james-r-han) (`RL_nav` and `crowd_sim_plus`).
