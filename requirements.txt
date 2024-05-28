@@ -21,6 +21,8 @@ requests==2.32.2
 setuptools==65.5.0
 six==1.16.0
 stable-baselines3==1.7.0
+tensorboard==2.14.0
+tqdm==4.66.4
 torch==1.13.1
 torchvision==0.14.1
 urllib3==2.2.1

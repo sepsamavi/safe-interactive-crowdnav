@@ -38,7 +38,7 @@ def test(save_stats_path, model_name, model_path, env_config_file, policy_config
         robot = Robot(env_config, 'robot')
         env.set_robot(robot)
         policy = policy_factory[env_config.get('robot', 'policy')]()
-        policy.configure(policy_config)
+        policy.configure(policy_config, env_config)
         robot.set_policy(policy)
         model = DQN.load(model_path, env=env)
         policy.set_attention(True)
@@ -151,7 +151,7 @@ def test(save_stats_path, model_name, model_path, env_config_file, policy_config
                 "num_frozen": num_frozen
             }
 
-            summary_df = summary_df.append(new_row, ignore_index=True)
+            summary_df = pd.concat([summary_df, pd.DataFrame([new_row])], ignore_index=True)
             summary_df.to_csv(os.path.join(save_stats_path, "summary.csv"))
 
             if time_to_end < smallest_time_to_end:
