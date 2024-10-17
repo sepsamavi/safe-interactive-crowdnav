@@ -17,7 +17,7 @@ This repository contains the code for our paper **SICNav: Safe and Interactive C
       eprint={2310.10982},
       archivePrefix={arXiv},
       primaryClass={cs.RO},
-      note={Currently under Review for the IEEE Transactions on Robotics (T-RO).}
+      note={Accepted for publication in the IEEE Transactions on Robotics (T-RO).}
 }
 ```
 
