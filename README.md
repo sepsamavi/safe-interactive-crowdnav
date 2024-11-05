@@ -1,7 +1,7 @@
 # Safe and Interactive Crowd Navigation
 This repository contains the code for our paper **SICNav: Safe and Interactive Crowd Navigation using Model Predictive Control and Bilevel Optimization** including the CrowdSimPlus Simulator.
 
-**[`Website`](http://sepehr.fyi/projects/sicnav) | [`Repo`](https://github.com/sepsamavi/safe-interactive-crowdnav) | [`Paper`](https://arxiv.org/abs/2310.10982) | [`Video`](https://tiny.cc/sicnav_overview)**
+**[`Website`](http://sepehr.fyi/projects/sicnav) | [`Repo`](https://github.com/sepsamavi/safe-interactive-crowdnav) | [`IEEE Xplore`](https://ieeexplore.ieee.org/document/10726864)| [`arXiv`](https://arxiv.org/abs/2310.10982) | [`Video`](https://tiny.cc/sicnav_overview)**
 
 <p align="center">
     <img style="padding: 0px 0 50px 0" src="./docs/problem_overview_rasterized.png" width="400">
@@ -10,15 +10,16 @@ This repository contains the code for our paper **SICNav: Safe and Interactive C
 
 
 ```bibtex
-@misc{samavi2023sicnav,
-      title={SICNav: Safe and Interactive Crowd Navigation using Model Predictive Control and Bilevel Optimization},
-      author={Sepehr Samavi and James R. Han and Florian Shkurti and Angela P. Schoellig},
-      year={2023},
-      eprint={2310.10982},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO},
-      note={Accepted for publication in the IEEE Transactions on Robotics (T-RO).}
-}
+@article{samavi2024sicnav,
+  author={Samavi, Sepehr and Han, James R. and Shkurti, Florian and Schoellig, Angela P.},
+  journal={IEEE Transactions on Robotics}, 
+  title={SICNav: Safe and Interactive Crowd Navigation using Model Predictive Control and Bilevel Optimization}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={1-19},  
+  doi={10.1109/TRO.2024.3484634},
+  url={https://arxiv.org/abs/2310.10982}}
 ```
 
 
