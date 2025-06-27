@@ -41,7 +41,7 @@ This code-base also includes the **CrowdSimPlus** simulator. CrowdSimPlus is bas
       author={Sepehr Samavi and Anthony Lem and Fumiaki Sato and Sirui Chen and Qiao Gu and Keijiro Yano and Angela P. Schoellig and Florian Shkurti},
       journal={IEEE Robotics and Automation Letters (in press)},
       title={SICNav-Diffusion: Safe and Interactive Crowd Navigation with Diffusion Trajectory Predictions},
-      year={2024},
+      year={2025},
       volume={},
       number={},
       pages={},
