@@ -1,6 +1,6 @@
 seed: 0
 method: mid  # mid or cnf XXX: fix model loading
-eval_mode: True  # True (evaluation) or False (training)
+eval_mode: False  # True (evaluation) or False (training)
 fast_train: True  # Skip evaluating most-likely trajectories and KDE during training
 time: False  # time generating a single set of predictions for a single timestep on average
 maximum_history_length: 7 # 6 is for HST version. 8 is for Official JRDB and ETH/UCY and so on.

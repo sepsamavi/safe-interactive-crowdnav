@@ -1,6 +1,6 @@
 seed: 0
 method: mid_jp # mid or cnf or mid_jp or cnf_jp
-eval_mode: True # False # True #  False # True # False # True # False  # True (evaluation) or False (training)
+eval_mode: False  # True (evaluation) or False (training)
 time: False  # time generating a single set of predictions for a single timestep on average
 fast_train: True
 maximum_history_length: 7
@@ -74,5 +74,3 @@ no_edge_encoding: False
 # Data Parameters:
 device: cuda
 eval_device: None
-
-time: False  # time generating a single set of predictions for a single timestep on average
