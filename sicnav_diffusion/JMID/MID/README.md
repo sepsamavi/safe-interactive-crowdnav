@@ -39,9 +39,9 @@ Note: Some of the configs in the ```/configs``` directory were used with a previ
 
 ### Step 2: Train model (MID, JMID)
 
- ```python main.py --config configs/YOUR_CONFIG.yaml --dataset DATASET```
+ ```python main.py --config configs/YOUR_CONFIG.yaml```
 
- Note that ```$DATASET``` should be from ["eth", "hotel", "univ", "zara1", "zara2", "sdd"]
+ Note that the dataset used for training and evaluation are specified in the config file.
 
 Logs and checkpoints will be automatically saved.
 
