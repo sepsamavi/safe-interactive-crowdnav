@@ -55,7 +55,7 @@ Configs:
 
 To evaluate a trained-model, please set ```eval_mode``` in config file to True and set the epoch you'd like to evaluate at from ```eval_at``` and run
 
- ```python main.py --config configs/YOUR_CONFIG.yaml --dataset DATASET```
+ ```python main.py --config configs/YOUR_CONFIG.yaml```
 
  You can evaluate with DDPM or DDIM sampling.
 
