@@ -8,6 +8,7 @@ import matplotlib.lines as mlines
 import numpy as np
 
 # matplotlib imports
+import matplotlib
 from matplotlib import cm as cmap
 from matplotlib import animation
 import matplotlib.pyplot as plt
@@ -1457,7 +1458,6 @@ class CrowdSimPlus(gym.Env):
             ax.set_ylabel('y(m)', fontsize=16)
 
             # add robot and its goal
-            # states_list = self.states
             if mode == 'joint_state':
                 states_list = get_vizable_robocentric(self.robocentric_states)
             else:
@@ -1466,12 +1466,9 @@ class CrowdSimPlus(gym.Env):
             robot_states = [state[0] for state in states_list]
             human_states = [state[1] for state in states_list]
             stat_obs_pos = [state[2] for state in states_list]
-            # goal = mlines.Line2D([self.robot.gx], [self.robot.gy], color=goal_color, marker='*', linestyle='None', markersize=15, label='Goal')
             goal = mlines.Line2D([robot_states[0].gx], [robot_states[0].gy], color=goal_color, marker='*', linestyle='None', markersize=15, label='Goal')
 
-            # start = plt.Circle(robot_positions[0], self.robot.radius, fill=True, color=start_color, label='Start')
             robot = plt.Circle(robot_positions[0], self.robot.radius, fill=True, color=robot_color, zorder=3)
-            # ax.add_artist(start)
             ax.add_artist(goal)
             ax.add_artist(robot)
 
@@ -1500,6 +1497,9 @@ class CrowdSimPlus(gym.Env):
 
 
             if hasattr(self.robot.policy, 'all_x_val'):
+                mpc_env = self.robot.policy.mpc_env
+                ofs = mpc_env.nx_r + mpc_env.np_g
+                mt = mpc_env.nx_hum
                 all_x_val = self.robot.policy.all_x_val
                 all_x_goals = self.robot.policy.all_x_goals
                 x_val = all_x_val[0]
@@ -1510,6 +1510,35 @@ class CrowdSimPlus(gym.Env):
                 mpc_line.set_visible(False)
                 if debug:
                     mpc_succ_text = plt.text(-5, -6, 'MPC: {}'.format('Success'), fontsize=14, color='tab:green')
+
+                if hasattr(self.robot.policy, 'all_forecasts'):
+                    hum_forecasts_scatters = []
+                    hum_forecasts_mc_lines = []
+                    hum_pred_pos_scatters = []
+                    hum_pred_pos_scatter_marker_size = 100
+                    for h_idx in range(self.human_num):
+                        # shape of forecasts is (num_humans, num_samples, horiz, xy)
+                        human_forecast_samples = self.robot.policy.all_forecasts[0][h_idx]
+                        humA_pred_pos_sample_scatters = []
+                        humA_forecasts_mc_lines = []
+                        for sample_idx in range(human_forecast_samples.shape[0]):
+                            humA_pred_pos_sample_scatter = ax.scatter(human_forecast_samples[sample_idx,:,0], human_forecast_samples[sample_idx,:,1], marker='.', color=forecast_color, alpha=1, zorder=1)
+                            humA_pred_pos_sample_scatters.append(humA_pred_pos_sample_scatter)
+                            humA_pred_pos_sample_scatter.set_visible(False)
+
+                            humA_pred_line = mlines.Line2D(human_forecast_samples[sample_idx,:,0], human_forecast_samples[sample_idx,:,1], linewidth=2.0, linestyle='-', color=forecast_color, alpha=0.1, zorder=1)
+                            ax.add_artist(humA_pred_line)
+                            humA_forecasts_mc_lines.append(humA_pred_line)
+                            humA_pred_line.set_visible(False)
+
+
+                        hum_forecasts_scatters.append(humA_pred_pos_sample_scatters)
+                        hum_forecasts_mc_lines.append(humA_forecasts_mc_lines)
+                        j = h_idx
+                        human_est_goal_line = ax.scatter(x_val[ofs+mt*j+4,:1], x_val[ofs+mt*j+5,:1], marker='*', linewidth=1.0, s=hum_pred_pos_scatter_marker_size, color=forecast_color, edgecolor='black', alpha=1, zorder=4)
+                        human_est_goal_line.set_visible(True)
+                        hum_pred_pos_scatters.append(human_est_goal_line)
+
             else:
                 mpc_robots = False
                 mpc_line = False
@@ -1541,21 +1570,21 @@ class CrowdSimPlus(gym.Env):
                 ax.add_artist(human_numbers[i])
 
             if hasattr(self.robot.policy, 'all_x_val'):
-                mpc_env = self.robot.policy.mpc_env
-                all_x_val_correct_orca = self.robot.policy.calc_actual_orca_for_x_val(all_x_val)
-                x_val_hum_corr = all_x_val_correct_orca[0]
+                if hasattr(self.robot.policy, 'calc_actual_orca_for_x_val'):
+                    all_x_val_correct_orca = self.robot.policy.calc_actual_orca_for_x_val(all_x_val)
+                    x_val_hum_corr = all_x_val_correct_orca[0]
                 human_mpc_lines = []
                 human_orca_lines = []
-                os = mpc_env.nx_r + mpc_env.np_g
-                mt = mpc_env.nx_hum
                 for j, _ in enumerate(human_positions[0]):
-                    hum_line_corr, = ax.plot(x_val_hum_corr[mt*j,:], x_val_hum_corr[mt*j+1,: ], linewidth=1.0, linestyle='--', marker='.', color=real_orca_color, alpha=0.5, markersize=2)
-                    hum_line_corr.set_visible(False)
+                    if hasattr(self.robot.policy, 'calc_actual_orca_for_x_val'):
+                        hum_line_corr, = ax.plot(x_val_hum_corr[mt*j,:], x_val_hum_corr[mt*j+1,: ], linewidth=1.0, linestyle='--', marker='.', color=real_orca_color, alpha=0.5, markersize=2)
+                        hum_line_corr.set_visible(False)
 
-                    hum_line, = ax.plot(x_val[os+mt*j,:], x_val[os+mt*j+1,: ], linewidth=3.0, linestyle='-', marker='.', color=hum_line_color, zorder=4)
+                    hum_line, = ax.plot(x_val[ofs+mt*j,:], x_val[ofs+mt*j+1,: ], linewidth=3.0, linestyle='-', marker='.', color=hum_line_color, zorder=4)
                     hum_line.set_visible(False)
                     human_mpc_lines.append(hum_line)
-                    human_orca_lines.append(hum_line_corr)
+                    if hasattr(self.robot.policy, 'calc_actual_orca_for_x_val'):
+                        human_orca_lines.append(hum_line_corr)
                 if True or debug:
                     human_mpc_diff_text = []
                     for i in range(len(human_states[0])):
@@ -1621,7 +1650,6 @@ class CrowdSimPlus(gym.Env):
 
                 if mpc_line and sim_times[frame_num] >= 0.0:
                     offset = global_step - 1 if sim_times[frame_num] == 0 else offset
-                    # succ_text = 'Success' if self.robot.policy.mpc_sol_succ[frame_num] else 'Failure'
 
                     if debug:
                         succ_text = self.robot.policy.all_debug_text[frame_num-offset]
@@ -1633,37 +1661,69 @@ class CrowdSimPlus(gym.Env):
                         succ_text = 'NA'
                     x_val = all_x_val[frame_num-offset]
                     x_goals = all_x_goals[frame_num-offset]
-                    x_val_hum_corr = all_x_val_correct_orca[frame_num-offset]
+                    if hasattr(self.robot.policy, 'calc_actual_orca_for_x_val'):
+                        x_val_hum_corr = all_x_val_correct_orca[frame_num-offset]
                     mpc_line.set_xdata(x_val[0,:])
                     mpc_line.set_ydata(x_val[1,:])
                     mpc_line.set_visible(True)
                     ref_line.set_xdata(x_goals[0,:])
                     ref_line.set_ydata(x_goals[1,:])
                     ref_line.set_visible(True)
-                    if self.robot.policy.mpc_sol_succ[frame_num-offset]:
-                        mpc_line.set_color(mpc_line_color)
-                    elif 'EMERG' in succ_text:
-                        mpc_line.set_color(mpc_line_color)
+                    if hasattr(self.robot.policy, 'all_forecasts'):
+                    # hum_forecasts_scatters = []
+                        time_color_map = matplotlib.cm.get_cmap('rainbow').resampled(self.robot.policy.horiz+1)
+                        time_linspace = np.linspace(0, 1, self.robot.policy.horiz)
+                        time_colors = [matplotlib.colors.to_hex(time_color_map(time_linspace[i])) for i in range(self.robot.policy.horiz)]
+
+                        # to be used for setting alpha based on importance weights of samples:
+                        norm = matplotlib.colors.Normalize(vmin=1/10*1/self.robot.policy.mpc_env.num_MID_samples, vmax=10*1/self.robot.policy.mpc_env.num_MID_samples, clip=True)
+                        for h_idx in range(self.human_num):
+                            # shape of forecasts is (num_humans, num_samples, horiz, xy)
+                            human_forecast_samples = self.robot.policy.all_forecasts[frame_num-offset][h_idx]
+                            humA_pred_pos_sample_scatter = hum_forecasts_scatters[h_idx]
+                            humA_forecasts_mc_lines = hum_forecasts_mc_lines[h_idx]
+                            for sample_idx in range(human_forecast_samples.shape[0]):
+                                humA_pred_pos_sample_scatter[sample_idx].set_offsets(human_forecast_samples[sample_idx,:self.robot.policy.horiz])
+                                humA_pred_pos_sample_scatter[sample_idx].set_color(time_colors)
+
+
+                                # set constant alpha for dots:
+                                humA_pred_pos_sample_scatter[sample_idx].set_alpha(0.5)
+
+                                humA_pred_pos_sample_scatter[sample_idx].set_visible(True)
+
+                                humA_forecasts_mc_lines[sample_idx].set_xdata(human_forecast_samples[sample_idx,:self.robot.policy.horiz,0])
+                                humA_forecasts_mc_lines[sample_idx].set_ydata(human_forecast_samples[sample_idx,:self.robot.policy.horiz,1])
+                                humA_forecasts_mc_lines[sample_idx].set_visible(True)
+
+
+
+                            j = h_idx
+
+                            hum_pred_pos_scatter = hum_pred_pos_scatters[h_idx]
+                            hum_pred_pos_scatter.set_offsets(x_val[ofs+mt*j+4:ofs+mt*j+6,:self.robot.policy.horiz].T)
+                            hum_pred_pos_scatter.set_sizes([hum_pred_pos_scatter_marker_size])
+                            hum_pred_pos_scatter.set_color(time_colors)
+                            hum_pred_pos_scatter.set_linewidth(1.0)
+                            hum_pred_pos_scatter.set_edgecolors('black')
+                            hum_pred_pos_scatter.set_visible(True)
+
                     for j, hum_line in enumerate(human_mpc_lines):
-                        hum_line.set_xdata(x_val[os+mt*j,:])
-                        hum_line.set_ydata(x_val[os+mt*j+1,:])
+                        hum_line.set_xdata(x_val[ofs+mt*j,:])
+                        hum_line.set_ydata(x_val[ofs+mt*j+1,:])
                         hum_line.set_visible(True)
-                        if self.robot.policy.mpc_sol_succ[frame_num-offset]:
-                            hum_line.set_color(hum_line_color)
-                        elif 'EMERG' in succ_text:
-                            hum_line.set_color(hum_line_color)
-                    for j, hum_line_corr in enumerate(human_orca_lines):
-                        hum_line_corr.set_xdata(x_val_hum_corr[mt*j,:])
-                        hum_line_corr.set_ydata(x_val_hum_corr[mt*j+1,:])
-                        if debug:
-                            hum_line_corr.set_visible(True)
-                        else:
-                            hum_line_corr.set_visible(False)
-                    if debug:
+                    if hasattr(self.robot.policy, 'calc_actual_orca_for_x_val'):
+                        for j, hum_line_corr in enumerate(human_orca_lines):
+                            hum_line_corr.set_xdata(x_val_hum_corr[mt*j,:])
+                            hum_line_corr.set_ydata(x_val_hum_corr[mt*j+1,:])
+                            if debug:
+                                hum_line_corr.set_visible(True)
+                            else:
+                                hum_line_corr.set_visible(False)
+                    if debug and hasattr(self.robot.policy, 'calc_actual_orca_for_x_val'):
+
                         for j, hum_text in enumerate(human_mpc_diff_text):
-                            # diff = np.mean(np.linalg.norm(x_val[os+mt*j:os+mt*j+2,:] - x_val_hum_corr[mt*j:mt*j+2,:], axis=0)) if self.robot.policy.mpc_sol_succ[frame_num] else np.nan
-                            diff = np.mean(np.linalg.norm(x_val[os+mt*j:os+mt*j+2,:] - x_val_hum_corr[mt*j:mt*j+2,:], axis=0))
-                            hum_text.set_text('{:.3f}'.format(diff)) if self.robot.policy.mpc_sol_succ[frame_num-offset] else hum_text.set_text('error')
+                            diff = np.mean(np.linalg.norm(x_val[ofs+mt*j:ofs+mt*j+2,:] - x_val_hum_corr[mt*j:mt*j+2,:], axis=0))
                             hum_text.set_position((x_val_hum_corr[mt*j,0] - x_offset, x_val_hum_corr[mt*j+1,0] + y_offset))
                             hum_text.set_visible(True)
 
@@ -1673,8 +1733,8 @@ class CrowdSimPlus(gym.Env):
                     human_numbers[i].set_position((human.center[0] - x_offset, human.center[1] - y_offset))
                     if mpc_line and sim_times[frame_num] >= 0.0 and (self.robot.policy.mpc_env.hum_model == 'orca_casadi_kkt' and not self.robot.policy.priviledged_info):
                         # get it from x_val the goal estimates will be the fifth and sixth elements for each human
-                        human_goal_lines[i].set_xdata([human.center[0], x_val[os+mt*i+4,0]])
-                        human_goal_lines[i].set_ydata([human.center[1], x_val[os+mt*i+5,0]])
+                        human_goal_lines[i].set_xdata([human.center[0], x_val[ofs+mt*i+4,0]])
+                        human_goal_lines[i].set_ydata([human.center[1], x_val[ofs+mt*i+5,0]])
                     else:
                         human_goal_lines[i].set_xdata([human.center[0], human_intermediate_goal[frame_num][i][0], human_gps[i][0]])
                         human_goal_lines[i].set_ydata([human.center[1], human_intermediate_goal[frame_num][i][1], human_gps[i][1]])
@@ -1687,10 +1747,8 @@ class CrowdSimPlus(gym.Env):
                 for idx, line2d in enumerate(stat_lines):
                     line = stat_obs_pos[frame_num][idx]
                     line2d.set_data([line[0][0], line[1][0]], [line[0][1], line[1][1]])
-                # time.set_text('Time: {:.2f}'.format(frame_num * self.time_step))
                 time.set_text('Time: {:.2f}'.format(display_times[frame_num]))
                 if hasattr(self.robot.policy, 'all_x_val') and frame_num < 2:
-                    # plt.legend([stat_lines[0], robot, humans[0], mpc_line, human_mpc_lines[0], human_orca_lines[0], goal, ref_line], ['stat. obs.', 'robot', 'human', 'MPC plan','predictions', 'ORCA GT', 'rob. goal'], fontsize=14, loc='best', ncol=2)
                     plt.legend([stat_lines[0], robot, humans[0], mpc_line, human_mpc_lines[0], goal, ref_line], ['stat. obs.', 'robot', 'human', 'MPC plan','predictions', 'rob. goal'], fontsize=14, loc='upper left', ncol=1)
 
             def plot_value_heatmap():

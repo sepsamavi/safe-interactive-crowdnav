@@ -1,0 +1,65 @@
+seed: 0
+time: False  # time generating a single set of predictions for a single timestep on average
+eval_mode: True
+method: mid_jp
+eval_at: 121
+maximum_history_length: 5
+prediction_horizon: 8
+
+############ Model #############
+model_path: sicnav_diffusion/JMID/MID/checkpoints/sim_inference_checkpoints/sim_gen_sicnav_p_midjp_cvg_epoch121.pt
+joint_prediction: True
+diffnet: JointPredictionTransformerConcatLinear
+encoder_dim: 256
+tf_layer: 3
+
+############ Training #############
+lr: 0.0001
+epochs: 90
+early_stopping: True
+batch_size: 256
+eval_batch_size: 256
+k_eval: 25  # number of samples from latent distribution of Trajectron++ CVAE to use
+eval_every: 30
+fast_train: False
+
+############ Testing #############
+test_split: val  # train, val, test
+num_samples: 100
+num_steps: 2
+is_eval_hst: False
+save_trajectories: False
+eval_timesteps: 1
+with_constraints: False
+constraint_type: opt_softplus
+visualize: False
+
+############ MID Config #############
+step_size: 2  # step size of each iteration of reverse diffusion
+sampling: ddim
+
+############### Trajectron++ Config #################
+# misc
+conf: None
+debug: False
+preprocess_workers: 0
+# model parameters
+offline_scene_graph: yes
+dynamic_edges: yes
+edge_state_combine_method: sum
+edge_influence_combine_method: attention
+edge_addition_filter: [0.25, 0.5, 0.75, 1.0]
+edge_removal_filter: [1.0, 0.0]
+override_attention_radius: []
+incl_robot_node: False
+map_encoding: False
+augment: True
+node_freq_mult_train: False
+node_freq_mult_eval: False
+scene_freq_mult_train: False
+scene_freq_mult_eval: False
+scene_freq_mult_viz: False
+no_edge_encoding: False
+# Data Parameters:
+device: cuda
+eval_device: None

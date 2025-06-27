@@ -1,0 +1,73 @@
+seed: 0
+method: mid  # mid or cnf XXX: fix model loading
+eval_mode: False  # True (evaluation) or False (training)
+fast_train: True  # Skip evaluating most-likely trajectories and KDE during training
+time: False  # time generating a single set of predictions for a single timestep on average
+maximum_history_length: 5 # 6 is for HST version. 8 is for Official JRDB and ETH/UCY and so on.
+prediction_horizon: 8 # 12(included current step) or 13(not included current step)
+
+############ Dataset #############
+data_dir: processed_data  # path to directory with pkl files
+dataset: jrdb_bev_0_25_multi_class_clean  # name of the data files and model name; data used for training
+inference_dataset: jrdb_bev_0_25_multi_class_clean  # name of the data files to do inference on; "dataset" is just used to provide ground truth agent IDs when saving trajectories; inference will only be done on this dataset
+regenerate_indexes: True
+
+############ Model #############
+diffnet: TransformerConcatLinear
+encoder_dim: 256
+tf_layer: 3
+
+############ Training #############
+lr: 0.001
+epochs: 1000
+early_stopping: False
+batch_size: 256
+eval_batch_size: 256
+k_eval: 25  # number of samples from latent distribution of Trajectron++ CVAE to use
+eval_every: 5
+load_chkpt: None  # set to None to start training from scratch
+
+############ Testing #############
+test_split: val  # train, val, test
+num_samples: 20  # number of sample to generate for evaluation
+eval_at: 70  # epoch to evaluate at
+eval_timesteps: 1 # number of timesteps to evaluate in a batch; automatically set to 1 if "time" is True;  Must be 1 if "with_constraints" is True. Default is 10 XXX: To fix
+save_trajectories: False  # save predictions on the evaluation data
+num_steps: 2  # number of steps during evaluation (Regarding CFM, 1st step is the sample from the base distribution, so this is really "num_steps - 1" steps. Regarding MID, )
+
+############ MID Config #############
+# These parameters are only used when "method" is mid
+# Set to "ddim" to enable fast sampling
+sampling: ddim
+
+############ CNF Config #############
+# These parameters are only used when "method" is cnf
+flow_matcher: CFM  # flow matcher to use: CFM, OTCFM (Optimal Transport CFM)
+solver: euler  # euler, dopri5, any other solver the NeuralODE class uses
+with_constraints: True
+visualize: True
+
+############### Trajectron++ Config #################
+# misc
+conf: None
+debug: False
+preprocess_workers: 0
+# model parameters
+offline_scene_graph: yes
+dynamic_edges: yes
+edge_state_combine_method: sum
+edge_influence_combine_method: attention
+edge_addition_filter: [0.25, 0.5, 0.75, 1.0]
+edge_removal_filter: [1.0, 0.0]
+override_attention_radius: []
+incl_robot_node: False
+augment: True
+node_freq_mult_train: False
+node_freq_mult_eval: False
+scene_freq_mult_train: False
+scene_freq_mult_eval: False
+scene_freq_mult_viz: False
+no_edge_encoding: False
+# Data Parameters:
+device: cuda
+eval_device: None

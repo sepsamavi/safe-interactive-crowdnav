@@ -4,7 +4,7 @@ from os import stat
 import numpy as np
 import casadi as cs
 from crowd_sim_plus.envs.utils.state_plus import FullyObservableJointState
-from .orca_callback import get_human_radii, get_human_goals
+from .orca_c_wrapper import get_human_radii, get_human_goals
 
 
 def det(vector1, vector2):

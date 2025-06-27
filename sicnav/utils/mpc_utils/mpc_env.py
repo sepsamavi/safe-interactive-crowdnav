@@ -5,7 +5,7 @@ from re import M
 from unicodedata import name
 import numpy as np
 import casadi as cs
-from sicnav.utils.mpc_utils.orca_callback import callbackORCA
+from sicnav.utils.mpc_utils.orca_c_wrapper import ORCACWrapper
 from sicnav.utils.mpc_utils.orca_casadi import casadiORCA
 from sicnav.utils.mpc_utils.system_model import SystemModel
 from sicnav.utils.mpc_utils.constraints import BoundedConstraint, LinearConstraint, NonlinearConstraint, QuadraticConstraint, ConstrainedVariableType, ConstraintType
@@ -38,6 +38,7 @@ class MPCEnv(object):
 
         if config is not None:
             self.configure(config)
+            self.config = config
         else:
             logging.info('[MPCEnv] No config. file, using default values')
 
@@ -86,7 +87,7 @@ class MPCEnv(object):
 
         # generate objects for internal ORCA model (summarized in ORCA callback function)
         # callback which calls o.g. rvo2 optimization
-        self.callback_orca = callbackORCA('callback_orca', self.time_step, joint_state, self.nx_r, self.np_g, self.nX_hums, self.dummy_human.policy, {'enable_fd':True})
+        self.callback_orca = ORCACWrapper('callback_orca', self.time_step, joint_state, self.nx_r, self.np_g, self.nX_hums, self.config, {'enable_fd':True}, nx_hum=self.nx_hum, num_humans = self.num_hums)
 
         # dynamics model of the environment
         X, U, next_X = self.gen_kin_model(joint_state)

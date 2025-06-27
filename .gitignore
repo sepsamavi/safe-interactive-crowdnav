@@ -1,6 +1,3 @@
-# OS files
-.DS_Store
-
 # editors
 .idea/
 .vscode/
@@ -32,6 +29,10 @@ slurm_files/
 *tmp*.c
 *tmp*.o
 *tmp*.so
+*.dylib
+
+# acados cache
+acados_cache/
 
 # Custom results folders
 *results_*/
@@ -45,3 +46,5 @@ slurm_files/
 *il_weights/
 
 *.pdf
+
+.DS_Store

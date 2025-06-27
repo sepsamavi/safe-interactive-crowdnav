@@ -3,13 +3,18 @@ from setuptools import setup
 
 setup(
     name='si_crowd_nav',
-    version='0.0.1',
+    version='0.0.2',
     python_requires='==3.8.13',
     packages=[
         'sicnav',
         'sicnav.policy',
         'sicnav.utils',
         'sicnav.configs',
+        'sicnav_diffusion',
+        'sicnav_diffusion.JMID',
+        'sicnav_diffusion.policy',
+        'sicnav_diffusion.utils',
+        'sicnav_diffusion.configs',
         'crowd_sim_plus',
         'crowd_sim_plus.envs',
         'crowd_sim_plus.envs.policy',
