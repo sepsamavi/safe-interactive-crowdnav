@@ -30,13 +30,13 @@ This code-base also includes the **CrowdSimPlus** simulator. CrowdSimPlus is bas
 ```
 
 ## SICNav-Diffusion Paper RA-L 2025 (in press)
-**[`Repo`](https://github.com/sepsamavi/safe-interactive-crowdnav) | [`arXiv`](https://arxiv.org/abs/2503.08858) | [`Video`](https://tiny.cc/sicnav_diffusion)**
+**[`Website`](http://sepehr.fyi/projects/sicnav_diffusion) | [`Repo`](https://github.com/sepsamavi/safe-interactive-crowdnav) | [`arXiv`](https://arxiv.org/abs/2503.08858) | [`Video`](https://tiny.cc/sicnav_diffusion)**
 
 <p align="center">
     <img style="padding: 0px 0 0px 0" src="./docs/block_diagram_2_anonym.png" width="500">
 </p>
 
-```
+```bibtex
 @article{samavi2025sicnavdiffusion,
       author={Sepehr Samavi and Anthony Lem and Fumiaki Sato and Sirui Chen and Qiao Gu and Keijiro Yano and Angela P. Schoellig and Florian Shkurti},
       journal={IEEE Robotics and Automation Letters (in press)},
