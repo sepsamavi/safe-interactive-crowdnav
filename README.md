@@ -1,6 +1,7 @@
 # SICNav and SICNav-Diffusion
-This repository contains the code base for our 2024 IEEE Transactions on Robotics (T-RO) paper introducing *SICNav: Safe and Interactive Crowd Navigation using Model Predictive Control and Bilevel Optimization* and our followup 2025 IEEE Robotics and Automation Letters (RA-L) paper *SICNav-Diffusion: Safe and Interactive Crowd Navigation with Diffusion Trajectory Predictions*.
+This repository contains the code base for our 2024 IEEE Transactions on Robotics (T-RO) paper introducing *SICNav: Safe and Interactive Crowd Navigation using Model Predictive Control and Bilevel Optimization* and our 🆕 followup 2025 IEEE Robotics and Automation Letters (RA-L) paper *SICNav-Diffusion: Safe and Interactive Crowd Navigation with Diffusion Trajectory Predictions*. ⚡️The new code uses the Acados solver to allow using SICNav in real-time⚡️.
 
+### Simulator
 This code-base also includes the **CrowdSimPlus** simulator. CrowdSimPlus is based on OpenAI gym and is an extension of CrowdSim ([Repo](https://github.com/vita-epfl/CrowdNav), [Paper](https://arxiv.org/abs/1809.08835)), with the follwing added features:
 - Static obstacles to allow for more realistic dense scenarios.
 - Social Forces Model (SFM) policy to simulate human agents, in addition to the original Optimal Reciprocal Collision Avoidance (ORCA) policy. These policies can be found under `crowd_sim_plus.envs.policy`.
